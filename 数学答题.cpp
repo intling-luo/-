@@ -21,9 +21,9 @@ void Init()//初始化
 	system("cls");
 	for (int i = 0;i < 10;i++)
 	{
-		NUM1[i] = rand() % 100;//随机数1，2
+		NUM1[i] = rand() % 99+1;//随机数1，2
 		Sleep(5);
-		NUM2[i] = rand() % 100;
+		NUM2[i] = rand() % 99+1;
 		Sleep(5);
 		calculate[i] = rand() % 4;//随机符号
 		Y[i] = true;//初始化控制
@@ -51,17 +51,19 @@ DWORD WINAPI ThreadFun(LPVOID pM);
 void QAQ()//主要运算函数
 {
 	system("cls");
-	HANDLE handle = CreateThread(NULL, 0, ThreadFun, NULL, 0, NULL);
-	
-		printf("第%d题:%.0lf %c %.0lf = ?\n",s, NUM1[s], Quaternion[s], NUM2[s]);
-		
-		if (s < 10) {
+	if (s == 10)
+	{
+		printf("答对了%d道题目，10秒后退出程序……", TURN_NUM);
+		}
+		else if (s < 10) {
+			HANDLE handle = CreateThread(NULL, 0, ThreadFun, NULL, 0, NULL);
+			printf("第%d题:%.0lf %c %.0lf = ?\n", s + 1, NUM1[s], Quaternion[s], NUM2[s]);
 			scanf_s("%lf", &input[s]);
 			if (Y[s]) 
 			{
-				X = true;
 				Y[s] = false;
-				switch (Quaternion[s])
+				X = true;
+				switch (calculate[s])
 				{
 				case 0:
 					if (input[s] == NUM1[s] + NUM2[s])
@@ -95,8 +97,8 @@ DWORD WINAPI ThreadFun(LPVOID pM)
 	{
 		if (X) //输入时直接重置计时器
 		{
-			t1 = t2;
 			X = false;
+			return 0;
 		}
 		
 		if (t2 - t1 == 10000)
@@ -105,8 +107,7 @@ DWORD WINAPI ThreadFun(LPVOID pM)
 			t1 = t2;
 			s++;
 			QAQ();
-			break;
-			
+			return 0;
 		}
 		t2 = GetTickCount();
 	/*	if ((t2 - t1) % 1000 == 0)
@@ -123,8 +124,6 @@ int main()
 	system("pause");
 	system("cls");//清屏
 	QAQ();
-	system("cls");//清屏
-	printf("答对了%d道题目", TURN_NUM);
-	
+	Sleep(10000);
 
 }
